@@ -52,8 +52,10 @@ A simple yet powerful chat application built using Django, Django REST Framework
   "password": "StrongPass123!",
   "password2": "StrongPass123!"
 }
+```
 
 ### 📝 Sign in
+
 **Endpoint:** `POST /api/auth/signin/`  
 **Body:**
 
@@ -63,7 +65,7 @@ A simple yet powerful chat application built using Django, Django REST Framework
   "password": "StrongPass123!",
 
 }
-
+```
 
 ### 📝 Send Message
 
@@ -72,9 +74,10 @@ A simple yet powerful chat application built using Django, Django REST Framework
 
 ```json
 {
-  "receiver": "manveer",
+  "receiver": "User",
   "content": "Hello there!"
 }
+```
 
 ---
 
@@ -85,3 +88,4 @@ A simple yet powerful chat application built using Django, Django REST Framework
 ```bash
 git clone https://github.com/Manveer101/mychatapp.git
 cd mychatapp
+```
