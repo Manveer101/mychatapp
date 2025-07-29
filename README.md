@@ -39,6 +39,7 @@ A simple yet powerful chat application built using Django, Django REST Framework
 | `/api/sent-messages/` | View sent messages |
 | `/messages/<int:pk>/edit/` | Edit sent messages |
 | `/messages/<int:pk>/delete/` | Delete sent messages |
+| `/api/schema/swagger-ui/` | For Swagger |
 
 ---
 
