@@ -17,6 +17,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from chat.views import ReceivedMessagesView, SentMessagesView, EditMessageView, DeleteMessageView
+from django.contrib import admin
+from django.urls import path, include
+from rest_framework import permissions
+from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -26,4 +30,8 @@ urlpatterns = [
     path('api/sent-messages/', SentMessagesView.as_view(), name='sent-messages'),
     path('messages/<int:pk>/edit/', EditMessageView.as_view(), name='edit-message'),
     path('messages/<int:pk>/delete/', DeleteMessageView.as_view(), name='delete-message'),
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    # Optional UI:
+    path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 ]
