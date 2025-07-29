@@ -35,6 +35,8 @@ A simple yet powerful chat application built using Django, Django REST Framework
 | `/api/chat/messages/` | Send and receive messages |
 | `/messages/received/` | View received messages |
 | `/api/sent-messages/` | View sent messages |
+| `/messages/<int:pk>/edit/` | Edit sent messages |
+| `/messages/<int:pk>/delete/` | Delete sent messages |
 
 ---
 
@@ -78,6 +80,22 @@ A simple yet powerful chat application built using Django, Django REST Framework
   "content": "Hello there!"
 }
 ```
+
+### 📝 Edit Message
+
+**Endpoint:** `POST /messages/<int:pk>/edit/`  
+**Body:**
+
+```json
+{
+  "content": "Hello there!"
+}
+```
+
+### 📝 delete Message
+
+**Endpoint:** `POST /messages/<int:pk>/delete/`  
+**Body:**
 
 ---
 
