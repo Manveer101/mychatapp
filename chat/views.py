@@ -6,6 +6,8 @@ from .serializers import MessageSerializer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
+from rest_framework import generics
+from django.utils import timezone
 
 
 
@@ -34,3 +36,41 @@ class SentMessagesView(ListAPIView):
 
     def get_queryset(self):
         return Message.objects.filter(sender=self.request.user).order_by('-timestamp')
+    
+# edit message 
+class EditMessageView(generics.UpdateAPIView):
+    serializer_class = MessageSerializer
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request, pk):
+        try:
+            message = Message.objects.get(pk=pk, sender=request.user)
+        except Message.DoesNotExist:
+            return Response({"error": "Message not found or not yours"}, status=404)
+
+        content = request.data.get("content")
+        if not content:
+            return Response({"error": "No content provided"}, status=400)
+
+        message.content = content
+        message.is_edited = True
+        message.edited_at = timezone.now()
+        message.save()
+
+        return Response({"message": "Message edited successfully"}, status=200)
+
+#delete message
+class DeleteMessageView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, pk):
+        try:
+            message = Message.objects.get(pk=pk, sender=request.user)
+        except Message.DoesNotExist:
+            return Response({"error": "Message not found or not yours"}, status=404)
+
+        message.is_deleted = True
+        message.content = "This message was deleted."
+        message.save()
+
+        return Response({"message": "Message deleted successfully"}, status=200)

@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from chat.views import ReceivedMessagesView, SentMessagesView
+from chat.views import ReceivedMessagesView, SentMessagesView, EditMessageView, DeleteMessageView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -24,4 +24,6 @@ urlpatterns = [
     path('api/chat/', include('chat.urls')),  # This includes /api/chat/messages/
     path('messages/received/', ReceivedMessagesView.as_view(), name='received-messages'),
     path('api/sent-messages/', SentMessagesView.as_view(), name='sent-messages'),
+    path('messages/<int:pk>/edit/', EditMessageView.as_view(), name='edit-message'),
+    path('messages/<int:pk>/delete/', DeleteMessageView.as_view(), name='delete-message'),
 ]
