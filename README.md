@@ -12,7 +12,9 @@ A simple yet powerful chat application built using Django, Django REST Framework
 - 🔎 Filter messages by sender/receiver
 - 📄 Pagination enabled for clean results
 - ⚙️ Admin panel for managing users/messages
-
+- 📩 Can Edit messages and delete
+- 📩 Can also edit deleted messages (An Amazing Feature)
+  
 ---
 
 ## 🛠 Tech Stack
@@ -95,7 +97,6 @@ A simple yet powerful chat application built using Django, Django REST Framework
 ### 📝 delete Message
 
 **Endpoint:** `POST /messages/<int:pk>/delete/`  
-**Body:**
 
 ---
 
