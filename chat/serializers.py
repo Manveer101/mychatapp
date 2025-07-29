@@ -10,7 +10,7 @@ class MessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Message
         fields = '__all__'
-        read_only_fields = ['sender', 'timestamp', 'is_edited', 'edited_at', 'is_deleted']
+        read_only_fields = ['sender', 'timestamp', 'is_edited', 'edited_at', 'is_deleted', 'read_at']
 
     def update(self, instance, validated_data):
         # Only update the content field

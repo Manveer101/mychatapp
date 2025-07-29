@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     'drf_spectacular',
 ]
 
+INSTALLED_APPS += ['corsheaders']
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -53,6 +55,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',  # put it near the top (before CommonMiddleware)
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -160,3 +163,8 @@ SPECTACULAR_SETTINGS = {
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
 }
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",                  # Vite dev
+    # "https://<your-frontend-domain>",         # Vercel/Netlify if deployed
+]

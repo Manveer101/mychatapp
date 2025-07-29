@@ -16,7 +16,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from chat.views import ReceivedMessagesView, SentMessagesView, EditMessageView, DeleteMessageView
+from chat.views import ReceivedMessagesView, SentMessagesView, EditMessageView, DeleteMessageView, MarkReadView, ConversationsView, ThreadView
+
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import permissions
@@ -34,4 +35,7 @@ urlpatterns = [
     # Optional UI:
     path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
     path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
+    path('thread/<str:username>/', ThreadView.as_view(), name='thread'),
+    path('messages/<int:pk>/read/', MarkReadView.as_view(), name='message-read'),
+    path('conversations/', ConversationsView.as_view(), name='conversations'),
 ]

@@ -10,6 +10,7 @@ class Message(models.Model):
     is_edited = models.BooleanField(default=False)
     is_deleted = models.BooleanField(default=False)
     edited_at = models.DateTimeField(null=True, blank=True)
+    read_at = models.DateTimeField(null=True, blank=True)
     
     def __str__(self):
         return f"{self.sender} -> {self.receiver}"
