@@ -40,26 +40,30 @@ class SentMessagesView(ListAPIView):
         return Message.objects.filter(sender=self.request.user).order_by('-timestamp')
     
 # edit message 
-class EditMessageView(generics.UpdateAPIView):
-    serializer_class = MessageSerializer
-    permission_classes = [IsAuthenticated]
 
-    def put(self, request, pk):
-        try:
-            message = Message.objects.get(pk=pk, sender=request.user)
-        except Message.DoesNotExist:
-            return Response({"error": "Message not found or not yours"}, status=404)
+class EditMessageView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
 
-        content = request.data.get("content")
+    def patch(self, request, pk):
+        msg = get_object_or_404(Message, pk=pk)
+        # Only the sender can edit
+        if msg.sender != request.user:
+            return Response({"detail": "Not allowed"}, status=status.HTTP_403_FORBIDDEN)
+
+        content = request.data.get("content", "").strip()
         if not content:
-            return Response({"error": "No content provided"}, status=400)
+            return Response({"content": ["This field may not be blank."]},
+                            status=status.HTTP_400_BAD_REQUEST)
 
-        message.content = content
-        message.is_edited = True
-        message.edited_at = timezone.now()
-        message.save()
+        if msg.is_deleted:
+            return Response({"detail": "Cannot edit a deleted message."},
+                            status=status.HTTP_400_BAD_REQUEST)
 
-        return Response({"message": "Message edited successfully"}, status=200)
+        msg.content = content
+        msg.is_edited = True
+        msg.edited_at = timezone.now()
+        msg.save()
+        return Response(MessageSerializer(msg).data, status=status.HTTP_200_OK)
 
 #delete message
 class DeleteMessageView(APIView):

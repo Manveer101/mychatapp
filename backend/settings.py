@@ -27,7 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-
+ASGI_APPLICATION = 'backend.asgi.application'
 # Application definition
 
 INSTALLED_APPS = [
@@ -168,3 +168,11 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",                  # Vite dev
     # "https://<your-frontend-domain>",         # Vercel/Netlify if deployed
 ]
+import os
+ASGI_APPLICATION = 'backend.asgi.application'   # project name
+CHANNEL_LAYERS = {
+  "default": {
+    "BACKEND": "channels_redis.core.RedisChannelLayer",
+   "CONFIG": {"hosts": [os.environ.get("REDIS_URL")]},
+  }
+}
