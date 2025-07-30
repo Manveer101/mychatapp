@@ -1,41 +1,74 @@
-"""
-URL configuration for backend project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/5.2/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
-from django.contrib import admin
-from django.urls import path, include
-from chat.views import ReceivedMessagesView, SentMessagesView, EditMessageView, DeleteMessageView, MarkReadView, ConversationsView, ThreadView
+# backend/urls.py
 
 from django.contrib import admin
 from django.urls import path, include
-from rest_framework import permissions
-from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
+
+# Chat views exposed directly here (no chat.urls include)
+from chat.views import (
+    ReceivedMessagesView,
+    SentMessagesView,
+    EditMessageView,
+    DeleteMessageView,
+    ConversationsView,
+    ThreadView,
+)
+
+# (Optional) include if you have this view implemented
+try:
+    from chat.views import MarkReadView  # mark a single message as read
+    HAS_MARK_READ = True
+except Exception:
+    HAS_MARK_READ = False
+
+from drf_spectacular.views import (
+    SpectacularAPIView,
+    SpectacularRedocView,
+    SpectacularSwaggerView,
+)
 
 urlpatterns = [
+    # Admin
     path('admin/', admin.site.urls),
-    path('api/', include('accounts.urls')),  # This includes /api/auth/signup/ and /api/auth/signin/
-    path('api/chat/', include('chat.urls')),  # This includes /api/chat/messages/
-    path('messages/received/', ReceivedMessagesView.as_view(), name='received-messages'),
-    path('api/sent-messages/', SentMessagesView.as_view(), name='sent-messages'),
-    path('messages/<int:pk>/edit/', EditMessageView.as_view(), name='edit-message'),
-    path('messages/<int:pk>/delete/', DeleteMessageView.as_view(), name='delete-message'),
+
+    # Auth (signup/signin)
+    path('api/', include('accounts.urls')),  # /api/auth/signup/ and /api/auth/signin/
+
+    # =======================
+    # CHAT ENDPOINTS (DIRECT)
+    # =======================
+
+    # Conversations list
+    #   GET /api/chat/conversations/
+    path('api/chat/conversations/', ConversationsView.as_view(), name='conversations'),
+
+    # Thread with a user (list & send)
+    #   GET  /api/chat/thread/<username>/?page=1
+    #   POST /api/chat/thread/<username>/  {"content": "..."}
+    path('api/chat/thread/<str:username>/', ThreadView.as_view(), name='thread'),
+
+    # Received & Sent helpers (normalized under /api/chat/)
+    #   GET /api/chat/received/
+    path('api/chat/received/', ReceivedMessagesView.as_view(), name='received-messages'),
+    #   GET /api/chat/sent/
+    path('api/chat/sent/', SentMessagesView.as_view(), name='sent-messages'),
+
+    # Edit/Delete message helpers (kept under /api/chat/messages/<pk>/*)
+    #   PATCH /api/chat/messages/<pk>/edit/
+    path('api/chat/messages/<int:pk>/edit/', EditMessageView.as_view(), name='edit-message'),
+    #   DELETE /api/chat/messages/<pk>/delete/
+    path('api/chat/messages/<int:pk>/delete/', DeleteMessageView.as_view(), name='delete-message'),
+]
+
+# Optional: mark a single message as read
+if HAS_MARK_READ:
+    urlpatterns += [
+        #   POST /api/chat/messages/<pk>/read/
+        path('api/chat/messages/<int:pk>/read/', MarkReadView.as_view(), name='message-read'),
+    ]
+
+# ====== API Docs ======
+urlpatterns += [
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
-    # Optional UI:
     path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
     path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
-    path('thread/<str:username>/', ThreadView.as_view(), name='thread'),
-    path('messages/<int:pk>/read/', MarkReadView.as_view(), name='message-read'),
-    path('conversations/', ConversationsView.as_view(), name='conversations'),
 ]

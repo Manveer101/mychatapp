@@ -5,8 +5,11 @@ from django.utils import timezone
 
 class MessageSerializer(serializers.ModelSerializer):
     sender = serializers.StringRelatedField(read_only=True)
-    receiver = serializers.SlugRelatedField(queryset=User.objects.all(), slug_field='username')
-
+    receiver = serializers.SlugRelatedField(
+        queryset=User.objects.all(),
+        slug_field='username',
+        required=False,          # <-- allow missing for thread POST
+    )
     class Meta:
         model = Message
         fields = '__all__'
