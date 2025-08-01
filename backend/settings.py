@@ -11,9 +11,10 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
-
+import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
 
 
 # Quick-start development settings - unsuitable for production
@@ -30,6 +31,8 @@ ALLOWED_HOSTS = ['*']
 ASGI_APPLICATION = 'backend.asgi.application'
 # Application definition
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -43,10 +46,11 @@ INSTALLED_APPS = [
     'accounts',
     'chat',
     'drf_spectacular',
+    # 'accounts.CustomUser'  # Custom user model
 ]
 
 INSTALLED_APPS += ['corsheaders']
-
+AUTH_USER_MODEL = 'accounts.CustomUser'
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -136,9 +140,9 @@ ASGI_APPLICATION = "backend.asgi.application"
 
 # For later (when i use Redis):
 CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer"
-    }
+  'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+  }
 }
 
 
@@ -165,14 +169,8 @@ SPECTACULAR_SETTINGS = {
 }
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",                  # Vite dev
+    "http://localhost:5174",                  # Vite dev
     # "https://<your-frontend-domain>",         # Vercel/Netlify if deployed
 ]
 import os
 ASGI_APPLICATION = 'backend.asgi.application'   # project name
-CHANNEL_LAYERS = {
-  "default": {
-    "BACKEND": "channels_redis.core.RedisChannelLayer",
-   "CONFIG": {"hosts": [os.environ.get("REDIS_URL")]},
-  }
-}

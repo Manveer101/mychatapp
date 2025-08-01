@@ -1,7 +1,8 @@
 from rest_framework import serializers
-from .models import Message
-from django.contrib.auth.models import User
+from .models import Message, Reaction
 from django.utils import timezone
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 class MessageSerializer(serializers.ModelSerializer):
     sender = serializers.StringRelatedField(read_only=True)
@@ -13,7 +14,7 @@ class MessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Message
         fields = '__all__'
-        read_only_fields = ['sender', 'timestamp', 'is_edited', 'edited_at', 'is_deleted', 'read_at']
+        read_only_fields = ['sender', 'timestamp', 'is_edited', 'edited_at', 'is_deleted', 'read_at', 'file', 'emoji']
 
     def update(self, instance, validated_data):
         # Only update the content field
@@ -23,3 +24,8 @@ class MessageSerializer(serializers.ModelSerializer):
             instance.edited_at = timezone.now()
             instance.save()
         return instance
+
+class ReactionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Reaction
+        fields = ['id', 'user', 'emoji']

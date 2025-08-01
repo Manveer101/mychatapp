@@ -1,16 +1,18 @@
 from rest_framework.viewsets import ModelViewSet
 from django.db.models import Q, Max, Count
-from django.contrib.auth.models import User
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
-from .models import Message
+from .models import Message, Reaction
 from .serializers import MessageSerializer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
 from rest_framework import generics, permissions, status
 from django.utils import timezone
-
+from rest_framework.parsers import MultiPartParser
+import json
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 
 class MessageViewSet(ModelViewSet):
@@ -32,14 +34,40 @@ class ReceivedMessagesView(APIView):
         serializer = MessageSerializer(messages, many=True)
         return Response(serializer.data)
 
-class SentMessagesView(ListAPIView):
-    serializer_class = MessageSerializer
+class SentMessagesView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get_queryset(self):
-        return Message.objects.filter(sender=self.request.user).order_by('-timestamp')
-    
+    def post(self, request, username):
+        try:
+            receiver = User.objects.get(username=username)
+        except User.DoesNotExist:
+            return Response({'detail': 'Receiver not found'}, status=404)
+
+        message = request.data.get("message")
+        if not message:
+            return Response({'message': 'Message content is required'}, status=400)
+
+        msg = Message.objects.create(sender=request.user, receiver=receiver, content=message)
+        serializer = MessageSerializer(msg)
+        return Response(serializer.data, status=201)
+
+#recations 
+
+
+
+class AddReactionView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, message_id):
+        emoji = request.data.get("emoji")
+        reaction = Reaction.objects.create(
+            message_id=message_id,
+            user=request.user,
+            emoji=emoji
+        )
+        return Response({"message": "Reaction added."})
 # edit message 
+
 
 class EditMessageView(APIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -105,7 +133,8 @@ from rest_framework.response import Response
 from django.db.models import Q
 from .models import Message
 from .serializers import MessageSerializer
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 class ThreadView(generics.ListCreateAPIView):
     """
@@ -155,3 +184,19 @@ class ConversationsView(APIView):
         # latest conversation top pe
         data.sort(key=lambda d: d["last_message"] or "", reverse=True)
         return Response(data, status=status.HTTP_200_OK)
+    
+# file upload
+class FileUploadView(APIView):
+    parser_classes = [MultiPartParser]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        file = request.FILES.get('file')
+        if not file:
+            return Response({'error': 'No file uploaded'}, status=400)
+
+        # Save file
+        path = default_storage.save(f'chat_files/{file.name}', file)
+        file_url = request.build_absolute_uri('/media/' + path)
+
+        return Response({'file_url': file_url}, status=201)
