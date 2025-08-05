@@ -169,7 +169,7 @@ SPECTACULAR_SETTINGS = {
 }
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5174",                  # Vite dev
+    "http://localhost:5173",                  # Vite dev
     # "https://<your-frontend-domain>",         # Vercel/Netlify if deployed
 ]
 import os

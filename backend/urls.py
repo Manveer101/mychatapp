@@ -62,7 +62,7 @@ urlpatterns = [
     # profile update 
     path('profile/', MyProfileView.as_view()),
     # reactins
-    path('chat/message/<int:message_id>/react/', AddReactionView.as_view()),
+    path('api/chat/messages/<int:message_id>/react/', AddReactionView.as_view()),
 ]
 
 # Optional: mark a single message as read
