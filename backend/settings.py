@@ -169,7 +169,7 @@ SPECTACULAR_SETTINGS = {
 }
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",                  # Vite dev
+    "https://chat-app-frontend-git-main-ravis-projects-dd0ae145.vercel.app",                  # Vite dev
     # "https://<your-frontend-domain>",         # Vercel/Netlify if deployed
 ]
 import os
