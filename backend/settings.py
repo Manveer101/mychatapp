@@ -169,8 +169,9 @@ SPECTACULAR_SETTINGS = {
 }
 
 CORS_ALLOWED_ORIGINS = [
-    "https://chat-app-frontend-coral-zeta.vercel.app/login/login",                  # Vite dev
+    "https://willowy-queijadas-3d178f.netlify.app/",                  # Vite dev
     # "https://<your-frontend-domain>",         # Vercel/Netlify if deployed
+    # "https://chat-app-frontend-coral-zeta.vercel.app/login/login",     
 ]
 import os
 ASGI_APPLICATION = 'backend.asgi.application'   # project name
